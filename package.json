@@ -20,7 +20,8 @@
     "re-resizable": "^6.9.17",
     "react": "^18",
     "react-dom": "^18",
-    "react-resizable": "^3.0.5"
+    "react-resizable": "^3.0.5",
+    "react-responsive": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

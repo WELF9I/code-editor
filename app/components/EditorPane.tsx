@@ -27,7 +27,7 @@ export default function EditorPane({ language, value, onChange }: EditorPaneProp
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full m-2 rounded-lg shadow-lg overflow-hidden">
+    <div className="flex-1 flex flex-col h-full rounded-lg shadow-lg overflow-hidden">
       <div className="bg-[#191919] text-white p-2 flex items-center rounded-t-lg">
         <img src={`/icons/${language}.png`} alt={language} className="w-6 h-6 mr-2" />
         <span className="uppercase">{language}</span>

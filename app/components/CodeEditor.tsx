@@ -10,6 +10,7 @@ export default function CodeEditor() {
   const [javascript, setJavascript] = useState('');
   const [output, setOutput] = useState('');
   const [editorHeight, setEditorHeight] = useState('50vh');
+  const [activeTab, setActiveTab] = useState('html');
   const resultRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -43,7 +44,45 @@ export default function CodeEditor() {
     }
   }, [output]);
 
-  return (
+  const renderMobileView = () => (
+    <div className="h-screen flex flex-col">
+      <div className="flex justify-around bg-gray-800 p-2">
+        {['html', 'css', 'javascript', 'result'].map((tab) => (
+          <button
+            key={tab}
+            className={`px-4 py-2 rounded ${activeTab === tab ? 'bg-blue-500' : 'bg-gray-700'}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.toUpperCase()}
+          </button>
+        ))}
+      </div>
+      <div className="flex-grow overflow-hidden">
+        {activeTab === 'html' && (
+          <EditorPane language="html" value={html} onChange={(value) => setHtml(value ?? '')} />
+        )}
+        {activeTab === 'css' && (
+          <EditorPane language="css" value={css} onChange={(value) => setCss(value ?? '')} />
+        )}
+        {activeTab === 'javascript' && (
+          <EditorPane language="javascript" value={javascript} onChange={(value) => setJavascript(value ?? '')} />
+        )}
+        {activeTab === 'result' && (
+          <div className="h-full bg-white">
+            <iframe
+              ref={resultRef}
+              title="output"
+              sandbox="allow-scripts allow-popups allow-modals allow-same-origin allow-forms allow-pointer-lock allow-top-navigation allow-popups-to-escape-sandbox"
+              srcDoc={output}
+              className="w-full h-full border-none"
+            ></iframe>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderDesktopView = () => (
     <div className="h-screen flex flex-col p-4">
       <Resizable
         size={{ width: '100%', height: editorHeight }}
@@ -55,20 +94,32 @@ export default function CodeEditor() {
         maxHeight="80vh"
         className="bg-black rounded-lg shadow-lg"
       >
-        <div className="flex flex-wrap h-full mb-5">
+        <div className="flex h-full space-x-4">
           <EditorPane language="html" value={html} onChange={(value) => setHtml(value ?? '')} />
           <EditorPane language="css" value={css} onChange={(value) => setCss(value ?? '')} />
           <EditorPane language="javascript" value={javascript} onChange={(value) => setJavascript(value ?? '')} />
         </div>
       </Resizable>
-      <div ref={resultRef} className="flex-grow bg-white mt-4 rounded-lg shadow-lg overflow-hidden">
-      <iframe
-        title="output"
-        sandbox="allow-scripts allow-popups allow-modals"
-        srcDoc={output}
-        className="w-full h-full border-none"
-      ></iframe>
+      <div className="flex-grow bg-white mt-4 rounded-lg shadow-lg overflow-hidden">
+        <iframe
+          ref={resultRef}
+          title="output"
+          sandbox="allow-scripts allow-popups allow-modals allow-same-origin allow-forms allow-pointer-lock allow-top-navigation allow-popups-to-escape-sandbox"
+          srcDoc={output}
+          className="w-full h-full border-none"
+        ></iframe>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      <div className="hidden md:block">
+        {renderDesktopView()}
+      </div>
+      <div className="block md:hidden">
+        {renderMobileView()}
+      </div>
+    </>
   );
 }
