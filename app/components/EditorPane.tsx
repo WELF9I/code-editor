@@ -1,31 +1,47 @@
 'use client';
 
-import { Editor } from '@monaco-editor/react';
+import CodeMirror from '@uiw/react-codemirror';
+import { html } from '@codemirror/lang-html';
+import { css } from '@codemirror/lang-css';
+import { javascript } from '@codemirror/lang-javascript';
+import { tokyoNight } from '@uiw/codemirror-theme-tokyo-night';
 
 type EditorPaneProps = {
   language: string;
   value: string;
   onChange: (value: string | undefined) => void;
-}
+};
 
 export default function EditorPane({ language, value, onChange }: EditorPaneProps) {
+  const getLanguageExtension = (language: string) => {
+    switch (language) {
+      case 'html':
+        return [html()];
+      case 'css':
+        return [css()];
+      case 'javascript':
+        return [javascript()];
+      default:
+        return [];
+    }
+  };
+
   return (
-    <div className="flex-1 h-full">
-      <div className="bg-gray-800 text-white p-2 flex items-center">
-        <img src={`/icons/${language}.svg`} alt={language} className="w-5 h-5 mr-2" />
+    <div className="flex-1 flex flex-col h-full m-2 rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-[#191919] text-white p-2 flex items-center rounded-t-lg">
+        <img src={`/icons/${language}.png`} alt={language} className="w-6 h-6 mr-2" />
         <span className="uppercase">{language}</span>
       </div>
-      <Editor
-        height="calc(100% - 40px)"
-        language={language}
-        value={value}
-        onChange={(value) => onChange(value ?? '')}
-        theme="vs-dark"
-        options={{
-          minimap: { enabled: false },
-          fontSize: 14,
-        }}
-      />
+      <div className="flex-1 overflow-hidden">
+        <CodeMirror
+          value={value}
+          height="100%"
+          extensions={getLanguageExtension(language)}
+          theme={tokyoNight}
+          onChange={(value) => onChange(value)}
+          className="h-full"
+        />
+      </div>
     </div>
   );
 }
